@@ -378,20 +378,20 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_context"></a> [context](#input\_context) | The context to use for the resources. If not set, the default context will be used. | <pre>object({<br/>    enabled         = optional(bool, true)<br/>    id              = optional(string)<br/>    id_length_limit = optional(number)<br/>    label_order     = optional(list(string))<br/>    namespace       = optional(string)<br/>    region          = optional(string)<br/>    unit            = optional(string)<br/>    tags            = optional(map(string), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_context"></a> [context](#input\_context) | The context to use for the resources. If not set, the default context will be used. | <pre>object({<br/>    enabled         = optional(bool)<br/>    id              = optional(string)<br/>    id_length_limit = optional(number)<br/>    id_order        = optional(list(string))<br/>    labels          = optional(map(string))<br/>    namespace       = optional(string)<br/>    region          = optional(string)<br/>    unit            = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | The delimiter to use for separating the ID string components. Either - or \_ | `string` | `"-"` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | A boolean to enable or disable the module | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for the resources (e.g. dev, prod, staging) | `string` | n/a | yes |
 | <a name="input_id"></a> [id](#input\_id) | The ID to use for the resources | `string` | `null` | no |
 | <a name="input_id_length_limit"></a> [id\_length\_limit](#input\_id\_length\_limit) | The maximum lenght of an id when combining the appropriate lables. | `number` | `3` | no |
-| <a name="input_label_order"></a> [label\_order](#input\_label\_order) | The order that the resource labels should be in. | `list(string)` | <pre>[<br/>  "environment",<br/>  "region",<br/>  "unit",<br/>  "namespace",<br/>  "id"<br/>]</pre> | no |
-| <a name="input_labels"></a> [labels](#input\_labels) | A map of objects that will define any desired labels. | <pre>map(object({<br/>    enabled         = optional(bool, true)<br/>    id              = string<br/>    id_length_limit = optional(number)<br/>    label_order     = optional(list(string))<br/>    namespace       = optional(string, "")<br/>    region          = optional(string)<br/>    unit            = optional(string)<br/>    tags            = optional(map(string), {})<br/>  }))</pre> | `{}` | no |
+| <a name="input_id_order"></a> [id\_order](#input\_id\_order) | The order of keys that the resource id should be in. | `list(string)` | <pre>[<br/>  "environment",<br/>  "region",<br/>  "unit",<br/>  "namespace",<br/>  "id"<br/>]</pre> | no |
+| <a name="input_labels"></a> [labels](#input\_labels) | A map of labels to add to the resources. Set global label values in the "this" version of the module, and then pass resource specific modifications to "module.this.context". | `map(string)` | `{}` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | The namespace for the resources (e.g. app-engine, cloud-functions). | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region for the resources (e.g. us-central1, europe-west1). | `string` | `"us-central1"` | no |
-| <a name="input_required_tags"></a> [required\_tags](#input\_required\_tags) | List of tag keys that must be present on module.tags or per-label tags | `list(string)` | <pre>[<br/>  "environment",<br/>  "terraform"<br/>]</pre> | no |
+| <a name="input_required_labels"></a> [required\_labels](#input\_required\_labels) | List of label keys that must be present on module.labels or per-resource labels. | `list(string)` | <pre>[<br/>  "environment",<br/>  "terraform"<br/>]</pre> | no |
+| <a name="input_resources"></a> [resources](#input\_resources) | A map of objects that will define any desired resources. | <pre>map(object({<br/>    enabled           = optional(bool, true)<br/>    id                = string<br/>    id_length_limit   = optional(number)<br/>    id_order          = optional(list(string))<br/>    labels            = optional(map(string), {})<br/>    namespace         = optional(string, "")<br/>    naming_max_length = optional(number)<br/>    region            = optional(string)<br/>    unit              = optional(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_sanitize_names"></a> [sanitize\_names](#input\_sanitize\_names) | Whether to sanitize composed names (lowercase, replace invalid characters with '-') | `bool` | `true` | no |
 | <a name="input_service_accounts"></a> [service\_accounts](#input\_service\_accounts) | Optional map of service account definitions that labels can reference. Keyed by logical name. Each object may include create (bool) and roles (list(string)). | <pre>map(object({<br/>    create = optional(bool, false)<br/>    roles  = optional(list(string), [])<br/>  }))</pre> | `{}` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to the resources. Set global tag values in the "this" version of the module, and then pass label specific modifications to "module.this.context". | `map(string)` | `{}` | no |
 | <a name="input_unit"></a> [unit](#input\_unit) | The unit identifier that the resources are for. Should be a short-hand identifier. | `string` | `null` | no |
 
 ## Outputs
@@ -402,8 +402,12 @@ No resources.
 | <a name="output_enabled"></a> [enabled](#output\_enabled) | A boolean to enable or disable the module. |
 | <a name="output_environment"></a> [environment](#output\_environment) | The environment for the resources (e.g. dev, prod, staging). |
 | <a name="output_id"></a> [id](#output\_id) | The ID to use for the resources. |
-| <a name="output_labels"></a> [labels](#output\_labels) | A map of objects that will define any desired labels. |
+| <a name="output_ids_full"></a> [ids\_full](#output\_ids\_full) | Map of resource -> id\_full values |
+| <a name="output_ids_short"></a> [ids\_short](#output\_ids\_short) | Map of resource -> id\_short values |
+| <a name="output_labels"></a> [labels](#output\_labels) | The labels compiled by the module. |
+| <a name="output_missing_required_labels"></a> [missing\_required\_labels](#output\_missing\_required\_labels) | A list of any required labels that are missing from the compiled labels. |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | The appropriate namespace for the resource(s). |
 | <a name="output_region"></a> [region](#output\_region) | The GCP region for the resource(s). |
-| <a name="output_tags"></a> [tags](#output\_tags) | The tags compiled by the label. |
+| <a name="output_resource_labels"></a> [resource\_labels](#output\_resource\_labels) | A map of resource -> labels maps that includes all labels applied to each resource. |
+| <a name="output_resources"></a> [resources](#output\_resources) | A map of objects that will define any desired resources. |
 <!-- END_TF_DOCS -->

@@ -18,9 +18,24 @@ output "id" {
   value       = var.id
 }
 
+output "ids_full" {
+  description = "Map of resource -> id_full values"
+  value       = { for name, configuration in local.finalized_resources : name => configuration.id_full }
+}
+
+output "ids_short" {
+  description = "Map of resource -> id_short values"
+  value       = { for name, configuration in local.finalized_resources : name => configuration.id_short }
+}
+
 output "labels" {
-  description = "A map of objects that will define any desired labels."
-  value       = local.finalized_labels
+  description = "The labels compiled by the module."
+  value       = var.labels
+}
+
+output "missing_required_labels" {
+  description = "A list of any required labels that are missing from the compiled labels."
+  value       = length(local.missing_required_labels) > 0
 }
 
 output "namespace" {
@@ -33,7 +48,12 @@ output "region" {
   value       = var.region
 }
 
-output "tags" {
-  description = "The tags compiled by the label."
-  value       = var.tags
+output "resources" {
+  description = "A map of objects that will define any desired resources."
+  value       = local.finalized_resources
+}
+
+output "resource_labels" {
+  description = "A map of resource -> labels maps that includes all labels applied to each resource."
+  value       = { for name, configuration in local.finalized_resources : name => configuration.labels }
 }

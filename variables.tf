@@ -1,16 +1,16 @@
 variable "context" {
   description = "The context to use for the resources. If not set, the default context will be used."
-  type        = object({
-    enabled         = optional(bool, true)
+  type = object({
+    enabled         = optional(bool)
     id              = optional(string)
     id_length_limit = optional(number)
-    label_order     = optional(list(string))
+    id_order        = optional(list(string))
+    labels          = optional(map(string))
     namespace       = optional(string)
     region          = optional(string)
     unit            = optional(string)
-    tags            = optional(map(string), {})
   })
-  default     = {}
+  default = {}
 }
 
 variable "delimiter" {
@@ -57,25 +57,16 @@ variable "id_length_limit" {
   }
 }
 
-variable "labels" {
-  description = "A map of objects that will define any desired labels."
-  type = map(object({
-    enabled         = optional(bool, true)
-    id              = string
-    id_length_limit = optional(number)
-    label_order     = optional(list(string))
-    namespace       = optional(string, "")
-    region          = optional(string)
-    unit            = optional(string)
-    tags            = optional(map(string), {})
-  }))
-  default = {}
-}
-
-variable "label_order" {
-  description = "The order that the resource labels should be in."
+variable "id_order" {
+  description = "The order of keys that the resource id should be in."
   type        = list(string)
   default     = ["environment", "region", "unit", "namespace", "id"]
+}
+
+variable "labels" {
+  description = "A map of labels to add to the resources. Set global label values in the \"this\" version of the module, and then pass resource specific modifications to \"module.this.context\"."
+  type        = map(string)
+  default     = {}
 }
 
 variable "namespace" {
@@ -95,16 +86,26 @@ variable "region" {
   }
 }
 
-variable "unit" {
-  description = "The unit identifier that the resources are for. Should be a short-hand identifier."
-  type        = string
-  default     = null
+variable "required_labels" {
+  description = "List of label keys that must be present on module.labels or per-resource labels."
+  type        = list(string)
+  default     = ["environment", "terraform"]
 }
 
-variable "tags" {
-  description = "A map of tags to add to the resources. Set global tag values in the \"this\" version of the module, and then pass label specific modifications to \"module.this.context\"."
-  type        = map(string)
-  default     = {}
+variable "resources" {
+  description = "A map of objects that will define any desired resources."
+  type = map(object({
+    enabled           = optional(bool, true)
+    id                = string
+    id_length_limit   = optional(number)
+    id_order          = optional(list(string))
+    labels            = optional(map(string), {})
+    namespace         = optional(string, "")
+    naming_max_length = optional(number)
+    region            = optional(string)
+    unit              = optional(string)
+  }))
+  default = {}
 }
 
 variable "sanitize_names" {
@@ -122,8 +123,8 @@ variable "service_accounts" {
   default = {}
 }
 
-variable "required_tags" {
-  description = "List of tag keys that must be present on module.tags or per-label tags"
-  type        = list(string)
-  default     = ["environment", "terraform"]
+variable "unit" {
+  description = "The unit identifier that the resources are for. Should be a short-hand identifier."
+  type        = string
+  default     = null
 }
