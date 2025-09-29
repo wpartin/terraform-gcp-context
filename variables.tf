@@ -10,7 +10,7 @@ variable "context" {
     region          = optional(string)
     unit            = optional(string)
   })
-  default = null
+  default = {}
 }
 
 variable "delimiter" {
