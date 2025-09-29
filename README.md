@@ -50,12 +50,6 @@ module "gke_context" {
       }
     }
   }
-
-  tags = {
-    terraform      = "true"
-    environment    = "test"
-    "self-service" = false
-  }
 }
 
 resource "google_storage_bucket" "bucket" {
