@@ -1,16 +1,16 @@
 variable "context" {
   description = "The context to use for the resources. If not set, the default context will be used."
-  type        = object({
-    enabled         = optional(bool, true)
+  type = object({
+    enabled         = optional(bool)
     id              = optional(string)
     id_length_limit = optional(number)
-    labels          = optional(map(string), {})
-    label_order     = optional(list(string))
+    id_order        = optional(list(string))
+    labels          = optional(map(string))
     namespace       = optional(string)
     region          = optional(string)
     unit            = optional(string)
   })
-  default     = {}
+  default = null
 }
 
 variable "delimiter" {
@@ -95,14 +95,15 @@ variable "required_labels" {
 variable "resources" {
   description = "A map of objects that will define any desired resources."
   type = map(object({
-    enabled         = optional(bool, true)
-    id              = string
-    id_length_limit = optional(number)
-    label_order     = optional(list(string))
-    namespace       = optional(string, "")
-    region          = optional(string)
-    unit            = optional(string)
-    tags            = optional(map(string), {})
+    enabled           = optional(bool, true)
+    id                = string
+    id_length_limit   = optional(number)
+    id_order          = optional(list(string))
+    labels            = optional(map(string), {})
+    namespace         = optional(string, "")
+    naming_max_length = optional(number)
+    region            = optional(string)
+    unit              = optional(string)
   }))
   default = {}
 }

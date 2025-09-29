@@ -12,38 +12,53 @@ locals {
   }
 
   initialized_resources = {
-    for resource, configuration in var.resources : resource => {
-      enabled         = coalesce(configuration.enabled, var.enabled)
-      environment     = var.environment
-      id              = coalesce(configuration.id, var.id)
-      id_length_limit = coalesce(configuration.id_length_limit, var.id_length_limit)
-      label_order     = coalesce(configuration.label_order, var.label_order)
-      namespace       = try(configuration.namespace, var.namespace, "")
-      root_context    = try(configuration.context, var.context, {})
-      region          = coalesce(configuration.region, var.region)
-      region_short    = lookup(local.regions, coalesce(configuration.region, var.region), coalesce(configuration.region, var.region))
-      unit            = try(configuration.unit, var.unit, "")
-      tags            = { for k, v in merge(var.labels, try(configuration.tags, {})) : k => tostring(v) }
+    for name, configuration in var.resources : name => {
+      enabled           = coalesce(configuration.enabled, var.enabled)
+      environment       = var.environment
+      id                = coalesce(configuration.id, var.id)
+      id_length_limit   = coalesce(configuration.id_length_limit, var.id_length_limit)
+      id_order          = coalesce(configuration.id_order, var.id_order)
+      labels            = { for k, v in merge(var.context.labels, var.labels, try(configuration.labels, {})) : k => tostring(v) }
+      namespace         = try(configuration.namespace, var.namespace, "")
+      naming_max_length = try(configuration.naming_max_length, null)
+      region            = coalesce(configuration.region, var.region)
+      region_short      = lookup(local.regions, coalesce(configuration.region, var.region), coalesce(configuration.region, var.region))
+      unit              = try(configuration.unit, var.unit, "")
     }
   }
 
+  service_max_lengths = {
+    default = 63
+    bucket  = 63
+    gke     = 40
+    project = 30
+    pubsub  = 255
+  }
+
+  # short hash suffix length to avoid collisions when truncating names
+  hash_suffix_length = 8
+
   id_parts_map = {
-    for label, configuration in local.initialized_resources : label => [for _, lab in configuration.label_order : tostring(lab == "region" ? lookup(configuration, "region_short") : lookup(configuration, lab)) if(lab == "region" ? lookup(configuration, "region_short") : lookup(configuration, lab)) != null && (lab == "region" ? lookup(configuration, "region_short") : lookup(configuration, lab)) != ""]
+    for name, configuration in local.initialized_resources : name => [for _, n in configuration.id_order : tostring(n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) if(n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) != null && (n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) != ""]
   }
 
   # sanitization helper: conservative replacements (no regex) to stay compatible
   sanitized = { for k, v in local.id_parts_map : k => [for item in v : lower(replace(replace(replace(replace(replace(replace(tostring(item), " ", "-"), "_", "-"), ".", "-"), ":", "-"), "/", "-"), "@", "-"))] }
 
   finalized_resources = {
-    for label, configuration in local.initialized_resources : label => merge(configuration, {
-      id_full  = join(var.delimiter, var.sanitize_names ? local.sanitized[label] : local.id_parts_map[label])
-      id_short = join(var.delimiter, slice(var.sanitize_names ? local.sanitized[label] : local.id_parts_map[label], 0, min(length(var.sanitize_names ? local.sanitized[label] : local.id_parts_map[label]), configuration.id_length_limit)))
+    for name, configuration in local.initialized_resources : name => merge(configuration, {
+      id_full = join(var.delimiter, var.sanitize_names ? local.sanitized[name] : local.id_parts_map[name])
+      id_short = join(var.delimiter, [ # first two parts are full length, the rest are truncated to 3 characters
+        for idx, part in(var.sanitize_names ? local.sanitized[name] : local.id_parts_map[name]) :
+        idx < 2 ? tostring(part) : substr(tostring(part), 0, min(length(tostring(part)), 3))
+      ])
+      root_context = var.context
     })
   }
 
-  # service account scaffolding: expose desired SA names and requested roles (no creation here)
-  service_account_requests = { for name, sa in var.service_accounts : name => sa }
-
-  # validate required tags exist (this is best-effort at plan-time)
-  missing_required_tags = [for t in var.required_labels : t if !contains(keys(var.labels), t)]
+  missing_required_labels = distinct(flatten([
+    for name, configuration in local.finalized_resources : [
+      for required in var.required_labels : required if !contains(keys(configuration.labels), required)
+    ]
+  ]))
 }
