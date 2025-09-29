@@ -1,4 +1,7 @@
 # Usage
+
+Below is an example of how to use this module to create a GCS bucket and GKE clusters with contextual information.
+
 ```hcl
 module "this" {
   source = "../"
@@ -72,6 +75,287 @@ resource "google_container_cluster" "gke" {
 
   resource_labels = each.value.tags
 }
+```
+
+Below is an example `terraform plan` output for the above configuration:
+
+```shell
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following
+symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_container_cluster.gke["medplum"] will be created
+  + resource "google_container_cluster" "gke" {
+      + cluster_ipv4_cidr                        = (known after apply)
+      + datapath_provider                        = (known after apply)
+      + default_max_pods_per_node                = (known after apply)
+      + deletion_protection                      = true
+      + disable_l4_lb_firewall_reconciliation    = false
+      + effective_labels                         = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "team"                       = "all-stars"
+          + "terraform"                  = "true"
+        }
+      + enable_cilium_clusterwide_network_policy = false
+      + enable_fqdn_network_policy               = false
+      + enable_intranode_visibility              = (known after apply)
+      + enable_kubernetes_alpha                  = false
+      + enable_l4_ilb_subsetting                 = false
+      + enable_legacy_abac                       = false
+      + enable_multi_networking                  = false
+      + enable_shielded_nodes                    = true
+      + endpoint                                 = (known after apply)
+      + id                                       = (known after apply)
+      + initial_node_count                       = 1
+      + label_fingerprint                        = (known after apply)
+      + location                                 = "us-central1"
+      + logging_service                          = (known after apply)
+      + master_version                           = (known after apply)
+      + monitoring_service                       = (known after apply)
+      + name                                     = "my-medplum-gke-cluster"
+      + network                                  = "default"
+      + networking_mode                          = (known after apply)
+      + node_locations                           = (known after apply)
+      + node_version                             = (known after apply)
+      + operation                                = (known after apply)
+      + private_ipv6_google_access               = (known after apply)
+      + project                                  = (known after apply)
+      + resource_labels                          = {
+          + "environment"  = "test"
+          + "self-service" = "false"
+          + "team"         = "all-stars"
+          + "terraform"    = "true"
+        }
+      + self_link                                = (known after apply)
+      + services_ipv4_cidr                       = (known after apply)
+      + subnetwork                               = (known after apply)
+      + terraform_labels                         = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "team"                       = "all-stars"
+          + "terraform"                  = "true"
+        }
+      + tpu_ipv4_cidr_block                      = (known after apply)
+    }
+
+  # google_container_cluster.gke["temporal"] will be created
+  + resource "google_container_cluster" "gke" {
+      + cluster_ipv4_cidr                        = (known after apply)
+      + datapath_provider                        = (known after apply)
+      + default_max_pods_per_node                = (known after apply)
+      + deletion_protection                      = true
+      + disable_l4_lb_firewall_reconciliation    = false
+      + effective_labels                         = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "team"                       = "boogy-bots"
+          + "terraform"                  = "true"
+        }
+      + enable_cilium_clusterwide_network_policy = false
+      + enable_fqdn_network_policy               = false
+      + enable_intranode_visibility              = (known after apply)
+      + enable_kubernetes_alpha                  = false
+      + enable_l4_ilb_subsetting                 = false
+      + enable_legacy_abac                       = false
+      + enable_multi_networking                  = false
+      + enable_shielded_nodes                    = true
+      + endpoint                                 = (known after apply)
+      + id                                       = (known after apply)
+      + initial_node_count                       = 1
+      + label_fingerprint                        = (known after apply)
+      + location                                 = "us-central1"
+      + logging_service                          = (known after apply)
+      + master_version                           = (known after apply)
+      + monitoring_service                       = (known after apply)
+      + name                                     = "my-temporal-gke-cluster"
+      + network                                  = "default"
+      + networking_mode                          = (known after apply)
+      + node_locations                           = (known after apply)
+      + node_version                             = (known after apply)
+      + operation                                = (known after apply)
+      + private_ipv6_google_access               = (known after apply)
+      + project                                  = (known after apply)
+      + resource_labels                          = {
+          + "environment"  = "test"
+          + "self-service" = "false"
+          + "team"         = "boogy-bots"
+          + "terraform"    = "true"
+        }
+      + self_link                                = (known after apply)
+      + services_ipv4_cidr                       = (known after apply)
+      + subnetwork                               = (known after apply)
+      + terraform_labels                         = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "team"                       = "boogy-bots"
+          + "terraform"                  = "true"
+        }
+      + tpu_ipv4_cidr_block                      = (known after apply)
+    }
+
+  # google_storage_bucket.bucket will be created
+  + resource "google_storage_bucket" "bucket" {
+      + effective_labels            = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "terraform"                  = "true"
+        }
+      + force_destroy               = false
+      + id                          = (known after apply)
+      + labels                      = {
+          + "environment"  = "test"
+          + "self-service" = "false"
+          + "terraform"    = "true"
+        }
+      + location                    = "US-CENTRAL1"
+      + name                        = "my-bucket"
+      + project                     = (known after apply)
+      + project_number              = (known after apply)
+      + public_access_prevention    = (known after apply)
+      + rpo                         = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = {
+          + "environment"                = "test"
+          + "goog-terraform-provisioned" = "true"
+          + "self-service"               = "false"
+          + "terraform"                  = "true"
+        }
+      + time_created                = (known after apply)
+      + uniform_bucket_level_access = (known after apply)
+      + updated                     = (known after apply)
+      + url                         = (known after apply)
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + bucket_context = {
+      + delimiter   = "-"
+      + enabled     = true
+      + environment = "test"
+      + id          = null
+      + labels      = {}
+      + namespace   = "gcs"
+      + region      = "us-central1"
+      + tags        = {
+          + environment  = "test"
+          + self-service = "false"
+          + terraform    = "true"
+        }
+    }
+  + gke_context    = {
+      + delimiter   = "-"
+      + enabled     = true
+      + environment = "test"
+      + id          = null
+      + labels      = {
+          + medplum  = {
+              + enabled         = true
+              + environment     = "test"
+              + id              = "phi-datastore"
+              + id_full         = "test-usc1-phi-datastore"
+              + id_length_limit = 3
+              + id_short        = "test-usc1-phi-datastore"
+              + label_order     = [
+                  + "environment",
+                  + "region",
+                  + "unit",
+                  + "namespace",
+                  + "id",
+                ]
+              + namespace       = ""
+              + region          = "us-central1"
+              + region_short    = "usc1"
+              + root_context    = {
+                  + enabled         = true
+                  + id              = null
+                  + id_length_limit = null
+                  + label_order     = null
+                  + namespace       = "gke"
+                  + region          = "us-central1"
+                  + tags            = {
+                      + environment = "test"
+                      + terraform   = "true"
+                    }
+                  + unit            = null
+                }
+              + tags            = {
+                  + environment  = "test"
+                  + self-service = "false"
+                  + team         = "all-stars"
+                  + terraform    = "true"
+                }
+              + unit            = null
+            }
+          + temporal = {
+              + enabled         = true
+              + environment     = "test"
+              + id              = "workflow-engine"
+              + id_full         = "test-usc1-workflow-engine"
+              + id_length_limit = 3
+              + id_short        = "test-usc1-workflow-engine"
+              + label_order     = [
+                  + "environment",
+                  + "region",
+                  + "unit",
+                  + "namespace",
+                  + "id",
+                ]
+              + namespace       = ""
+              + region          = "us-central1"
+              + region_short    = "usc1"
+              + root_context    = {
+                  + enabled         = true
+                  + id              = null
+                  + id_length_limit = null
+                  + label_order     = null
+                  + namespace       = "gke"
+                  + region          = "us-central1"
+                  + tags            = {
+                      + environment = "test"
+                      + terraform   = "true"
+                    }
+                  + unit            = null
+                }
+              + tags            = {
+                  + environment  = "test"
+                  + self-service = "false"
+                  + team         = "boogy-bots"
+                  + terraform    = "true"
+                }
+              + unit            = null
+            }
+        }
+      + namespace   = ""
+      + region      = "us-central1"
+      + tags        = {
+          + environment  = "test"
+          + self-service = "false"
+          + terraform    = "true"
+        }
+    }
+  + this           = {
+      + delimiter   = "-"
+      + enabled     = true
+      + environment = "test"
+      + id          = null
+      + labels      = {}
+      + namespace   = "gke"
+      + region      = "us-central1"
+      + tags        = {
+          + environment = "test"
+          + terraform   = "true"
+        }
+    }
 ```
 
 # terraform-gcp-context
