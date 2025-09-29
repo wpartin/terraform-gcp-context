@@ -18,7 +18,7 @@ locals {
       id                = coalesce(configuration.id, var.id)
       id_length_limit   = coalesce(configuration.id_length_limit, var.id_length_limit)
       id_order          = coalesce(configuration.id_order, var.id_order)
-      labels            = { for k, v in merge(var.context.labels, var.labels, try(configuration.labels, {})) : k => tostring(v) }
+      labels            = { for k, v in merge(try(var.context.labels, {}), var.labels, try(configuration.labels, {})) : k => tostring(v) }
       namespace         = try(configuration.namespace, var.namespace, "")
       naming_max_length = try(configuration.naming_max_length, null)
       region            = coalesce(configuration.region, var.region)
