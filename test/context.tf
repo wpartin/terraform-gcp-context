@@ -5,7 +5,7 @@ module "this" {
   namespace   = "gke"
   region      = "us-central1"
 
-  tags = {
+  labels = {
     terraform   = "true"
     environment = "test"
   }
@@ -18,7 +18,7 @@ module "bucket_context" {
   namespace   = "gcs"
   environment = module.this.environment
 
-  tags = {
+  labels = {
     terraform      = "true"
     environment    = "test"
     "self-service" = false
@@ -31,16 +31,16 @@ module "gke_context" {
   context     = module.this
   environment = module.this.environment
 
-  labels = {
+  resources = {
     medplum = {
       id   = "phi-datastore"
-      tags = {
+      labels = {
         team = "all-stars"
       }
     }
     temporal = {
       id   = "workflow-engine"
-      tags = {
+      labels = {
         team = "boogy-bots"
       }
     }
@@ -51,7 +51,7 @@ resource "google_storage_bucket" "bucket" {
   location = module.bucket_context.region
   name     = "my-bucket"
 
-  labels = module.bucket_context.tags
+  labels = module.bucket_context.labels
 }
 
 resource "google_container_cluster" "gke" {
@@ -62,5 +62,5 @@ resource "google_container_cluster" "gke" {
 
   initial_node_count = 1
 
-  resource_labels = each.value.tags
+  resource_labels = each.value.labels
 }

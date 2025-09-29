@@ -22,10 +22,10 @@ run "validate_labels" {
 
   assert {
     condition = alltrue([
-      contains(keys(module.gke_context.labels), "medplum"),
-      module.gke_context.labels["medplum"]["id"] == "phi-datastore",
-      contains(keys(module.gke_context.labels), "temporal"),
-      module.gke_context.labels["temporal"]["id"] == "workflow-engine"
+      contains(keys(module.gke_context.resources), "medplum"),
+      module.gke_context.resources["medplum"]["id"] == "phi-datastore",
+      contains(keys(module.gke_context.resources), "temporal"),
+      module.gke_context.resources["temporal"]["id"] == "workflow-engine"
     ])
     error_message = "Required labels are missing"
   }

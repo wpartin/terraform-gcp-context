@@ -19,8 +19,8 @@ output "id" {
 }
 
 output "labels" {
-  description = "A map of objects that will define any desired labels."
-  value       = local.finalized_labels
+  description = "The labels compiled by the module."
+  value       = var.labels
 }
 
 output "namespace" {
@@ -33,7 +33,8 @@ output "region" {
   value       = var.region
 }
 
-output "tags" {
-  description = "The tags compiled by the label."
-  value       = var.tags
+output "resources" {
+  description = "A map of objects that will define any desired resources."
+  value       = local.finalized_resources
 }
+
