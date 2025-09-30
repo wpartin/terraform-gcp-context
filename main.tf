@@ -35,9 +35,6 @@ locals {
     pubsub  = 255
   }
 
-  # short hash suffix length to avoid collisions when truncating names
-  hash_suffix_length = 8
-
   id_parts_map = {
     for name, configuration in local.initialized_resources : name => [for _, n in configuration.id_order : tostring(n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) if(n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) != null && (n == "region" ? lookup(configuration, "region_short") : lookup(configuration, n)) != ""]
   }
